@@ -4,6 +4,8 @@ from django.urls import reverse
 from django.db import IntegrityError
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework import status
 
 #import django authentication functions
 from django.contrib.auth import authenticate, login, logout
@@ -92,25 +94,35 @@ def todos(request):
         serializer = TodoSerializer(todos,many=True)
         return Response(serializer.data)
     # if method is POST which here is for User trying to create a new todo
-    if request.method=="POST":
+    elif request.method=="POST":
         body = request.data['body']
         user = request.user
         todo = Todo.objects.create(user=user, body=body)
         serializer = TodoSerializer(todo, many=False)
         return Response(serializer.data)
 
+
+
 #dealing with deleting or modifying a particular todo by its primary key
 @api_view(['PATCH','DELETE'])
 def modifytodo(request,pk):
     #if request metod is delete then go ahead and delete the todo
     if request.method=="DELETE":
-        todo = Todo.objects.get(pk=pk)
+        try:
+            todo = Todo.objects.get(pk=pk)
+        except ObjectDoesNotExist:
+            content = {"Error":"no such models exist"}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
         todo.delete()
         return Response("deleted")
     # if requesting method is PATCH go ahead and modify the post
     elif request.method == "PATCH":
         status = request.data['completed']
-        todo = Todo.objects.get(pk=pk)
+        try:
+            todo = Todo.objects.get(pk=pk)
+        except ObjectDoesNotExist:
+            content = {"Error":"no such models exist"}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
         todo.completed = status
         todo.save()
         serializer = TodoSerializer(todo,many=False)
