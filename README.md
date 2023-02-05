@@ -1,4 +1,4 @@
-##Backend application for implementing the TODO list application using Django rest framework
+## Backend application for implementing the TODO list application using Django rest framework
 
 This repository details the code for developing a backend for Todo List application
 
