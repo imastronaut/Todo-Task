@@ -1,0 +1,20 @@
+{% extends "todo/layout.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+{% block body %}
+<div class="form">
+    {% if message %}
+        {{message}}
+    {% endif %}
+    <header>Login</header>
+    <form action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        <input type="email" name="email" placeholder="email">
+        <input type="password" name="password">
+        <input type="submit" value="Login">
+    </form>
+    <p>Don't have an account register <a href="{% url 'register' %}">here</a></p>
+</div>
+{% endblock %} 
