@@ -4,10 +4,13 @@ from django.urls import reverse
 from django.db import IntegrityError
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
+
+#import django authentication functions
 from django.contrib.auth import authenticate, login, logout
+#importing the models from models.py
 from .models import User, Todo
+#importing the serializer classes
 from .serializers import UserSerializer, TodoSerializer
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -15,6 +18,7 @@ from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 def index(request):
+    # if user is not authenticated redirect to login page
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("login"))
     return render(request,"todo/index.html")
@@ -75,15 +79,19 @@ def login_view(request):
 
 
 
+#defining the api_view endi points
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def todos(request):
     if not request.user.is_authenticated:
         return Response("you are not logged in")
+    #if method is GET return all todos that correspond to a logged in user
     if request.method == "GET":
         user = request.user
         todos = Todo.objects.filter(user=user)
         serializer = TodoSerializer(todos,many=True)
         return Response(serializer.data)
+    # if method is POST which here is for User trying to create a new todo
     if request.method=="POST":
         body = request.data['body']
         user = request.user
@@ -91,12 +99,15 @@ def todos(request):
         serializer = TodoSerializer(todo, many=False)
         return Response(serializer.data)
 
+#dealing with deleting or modifying a particular todo by its primary key
 @api_view(['PATCH','DELETE'])
 def modifytodo(request,pk):
+    #if request metod is delete then go ahead and delete the todo
     if request.method=="DELETE":
         todo = Todo.objects.get(pk=pk)
         todo.delete()
         return Response("deleted")
+    # if requesting method is PATCH go ahead and modify the post
     elif request.method == "PATCH":
         status = request.data['completed']
         todo = Todo.objects.get(pk=pk)
@@ -104,9 +115,6 @@ def modifytodo(request,pk):
         todo.save()
         serializer = TodoSerializer(todo,many=False)
         return Response(serializer.data)
-
-
-
 
 
 

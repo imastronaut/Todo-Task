@@ -10,10 +10,10 @@ Register
     <header>Register</header>
     <form action="{% url 'register' %}" method='post'>
         {% csrf_token %}
-        <input type="text" name="username" placeholder="Full Name">
-        <input type="email" name="email" placeholder="Email">
-        <input type="password" name="password" placeholder="Password">
-        <input type="password" name="confirmation" placeholder="Confirm Password">
+        <input type="text" name="username" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="password" name="confirmation" placeholder="Confirm Password" required>
         <input type="submit" value="Register">
     </form>
     <p>Have an account already Login <a href="{% url 'login' %}">here</a></p>

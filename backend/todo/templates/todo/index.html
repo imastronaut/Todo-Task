@@ -12,6 +12,10 @@
     <div class="container">
         Hello {{request.user.username}}
         <a href="{% url 'logout' %}">Logout</a>
+        <span>
+
+        </span>
+        <p>Add your todo</p>
         <div id="newtask">
             <form onsubmit="event.preventDefault(); handleSubmit(event);">
                 {% csrf_token %}
@@ -55,6 +59,7 @@
                 },
                 body:JSON.stringify({"body":e.target.input.value})
             })
+            .catch(err=>alert(err))
             let data = await response.json()
             add_todo(data)
             document.querySelector("#newtask-input").value="";
@@ -75,32 +80,46 @@
                     "X-CSRFToken" : csrftoken
                 },
             })
+            .catch(err=>alert(err))
             let data = await response.json()   
-            console.log(data)
             displayTodo(data)
         }
         getTodos()
         
         function add_todo(entry){
-            document.querySelector("#tasks").innerHTML+=
-            `<div class="task">
-                <input type="checkbox" id = "input${entry.id}" onchange='completeItem(${entry.id})'>
-                <label for="input${entry.id}" id="label${entry.id}">${entry.body}</label>
-                <button class="delete" onclick='handleDelete(${entry.id}); this.parentNode.remove();'>
-                        <i class="fa-solid fa-trash"></i>
-                </button>
-            </div>`;
+            var div = document.createElement('div')
+            div.setAttribute('class','task')
+            var inp = document.createElement('input')
+            inp.setAttribute('type','checkbox')
+            inp.setAttribute('id',`input${entry.id}`)
+            var lbl = document.createElement('label');
+            lbl.setAttribute('for',`input${entry.id}`)
+            lbl.setAttribute('id',`label${entry.id}`)
+            lbl.appendChild(document.createTextNode(entry.body));
+            var btn = document.createElement('button')
+            btn.setAttribute('class','delete')
+            var btnn = document.createElement('i')
+            btnn.setAttribute('class',"fa-solid fa-trash")
+            btn.appendChild(btnn)
+            div.appendChild(inp)
+            div.appendChild(lbl)
+            div.appendChild(btn)
+            inp.addEventListener('change',()=>{
+                completeItem(entry.id)
+            })
+            btn.addEventListener('click',function(){
+                handleDelete(entry.id);
+                this.parentNode.remove()
+            })
+            document.querySelector("#tasks").append(div)
+
             if(entry.completed){
-                // console.log(document.getElementById(`#label${entry.id}`).value)
-                function check(){
-                    document.querySelector(`#input${entry.id}`).checked = true
-                }
-                check()
+                document.querySelector(`#input${entry.id}`).checked = true;
                 document.querySelector(`#label${entry.id}`).style.textDecoration = "line-through";
-            }else{
-                
             }
+            
         }
+
 
         const handleDelete = async(id)=>{
             let response = await fetch(`todo/${id}`,{
@@ -110,13 +129,14 @@
                     "X-CSRFToken" : csrftoken
                 }
             })
+            .catch(err=>alert(err))
             let data = await response.json()
         }
         
         
 
         const completeItem = async(id)=>{
-            console.log(document.querySelector(`#input${id}`).checked)
+           
             let response = await fetch(`todo/${id}`,{
                 method:"PATCH",
                 headers:{
@@ -125,8 +145,8 @@
                 },
                 body:JSON.stringify({"completed":document.querySelector(`#input${id}`).checked})
             })
+            .catch(err=>alert(err))
             let data = await response.json()
-            console.log(data)
             if(data.completed){
                 document.querySelector(`#label${id}`).style.textDecoration = "line-through";
             }else{
