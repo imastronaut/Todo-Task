@@ -93,17 +93,17 @@
             inp.setAttribute('type','checkbox')
             inp.setAttribute('id',`input${entry.id}`)
             var lbl = document.createElement('label');
-            lbl.setAttribute('for',`input${entry.id}`)
-            lbl.setAttribute('id',`label${entry.id}`)
+            lbl.setAttribute('for',`input${entry.id}`);
+            lbl.setAttribute('id',`label${entry.id}`);
             lbl.appendChild(document.createTextNode(entry.body));
-            var btn = document.createElement('button')
-            btn.setAttribute('class','delete')
-            var btnn = document.createElement('i')
-            btnn.setAttribute('class',"fa-solid fa-trash")
-            btn.appendChild(btnn)
-            div.appendChild(inp)
-            div.appendChild(lbl)
-            div.appendChild(btn)
+            var btn = document.createElement('button');
+            btn.setAttribute('class','delete');
+            var btnn = document.createElement('i');
+            btnn.setAttribute('class',"fa-solid fa-trash");
+            btn.appendChild(btnn);
+            div.appendChild(inp);
+            div.appendChild(lbl);
+            div.appendChild(btn);
             inp.addEventListener('change',()=>{
                 completeItem(entry.id)
             })

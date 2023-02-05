@@ -1,2 +1,3 @@
 venv
 .hintrc
+backend/db.sqlite3

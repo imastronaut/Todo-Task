@@ -4,6 +4,11 @@ This repository details the code for developing a backend for Todo List applicat
 
 This Todo application allows user's to make list of todo and uses django's default authentication system
 
+and uses Rest apis to
+1.create,delete and update a task
+2.To mark the task as complete / Incomplete
+
+
 
 
 to run this project on your local machine first install requirement by typing the following to command line
